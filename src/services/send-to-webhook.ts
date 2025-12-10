@@ -34,14 +34,19 @@ export const sendToWebhook = (async (payload, schema?: z.ZodType) => {
   const { action } = payload;
   const startTime = Date.now();
 
+  // Si no hay webhook configurado, devolver respuesta vacía
   if (!process.env.WEBHOOK_URL) {
-    throw new Error('WEBHOOK_URL not defined');
-  }
-  if (!process.env.WEBHOOK_TOKEN) {
-    throw new Error('WEBHOOK_TOKEN not defined');
+    logger.log(`Webhook not configured, skipping ${action}`, undefined, loggerContext);
+    return {
+      action,
+      status: 200,
+      message: 'Webhook not configured',
+      response: schema ? schema.parse([]) : [],
+    };
   }
 
   const url = process.env.WEBHOOK_URL;
+  const token = process.env.WEBHOOK_TOKEN || ''; // Token opcional
 
   try {
     // call webhook
@@ -53,7 +58,7 @@ export const sendToWebhook = (async (payload, schema?: z.ZodType) => {
     const response = await axios.post(url, payload, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.WEBHOOK_TOKEN}`,
+        ...(token && { Authorization: `Bearer ${token}` }), // Solo agregar si existe
       },
     });
     logger.log(
