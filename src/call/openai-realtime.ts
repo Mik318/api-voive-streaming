@@ -222,7 +222,10 @@ export const handleOpenAIRealtimeConnected = (
       agent.getToolResponseSchema('read_memory')
     ).then((response) => {
       if (response.action !== 'read_memory') return;
-      const memory = agent.getTool(response.action)?.response?.parse(response.response);
+      // Si no hay webhook, response.response será undefined, usar array vacío
+      const memory = response.response
+        ? agent.getTool(response.action)?.response?.parse(response.response)
+        : [];
       logger.log(`Memory read: ${stringify(memory)}`, { memory }, loggerContext);
       setTimeout(() => sendInitiateConversation(openAIRealtimeClient, session, memory), 500);
     });
