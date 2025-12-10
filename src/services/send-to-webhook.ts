@@ -41,7 +41,7 @@ export const sendToWebhook = (async (payload, schema?: z.ZodType) => {
       action,
       status: 200,
       message: 'Webhook not configured',
-      response: schema ? schema.parse([]) : [],
+      response: undefined, // No intentar parsear cuando no hay webhook
     };
   }
 
