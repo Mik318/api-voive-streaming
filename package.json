@@ -13,7 +13,7 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "npm run serve-watch",
-    "build": "",
+    "build": "tsc",
     "start": "npm run serve",
     "debug": "npm run serve-debug-node",
     "serve": "tsx src/server.ts",

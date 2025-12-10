@@ -24,7 +24,7 @@ RUN npm run build
 
 # Limpiar node_modules y reinstalar solo dependencias de producción
 RUN rm -rf node_modules && \
-    npm ci --omit=dev && \
+    npm ci --omit=dev --ignore-scripts && \
     npm cache clean --force
 
 # Etapa 2: Production
