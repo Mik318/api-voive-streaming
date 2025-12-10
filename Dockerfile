@@ -19,13 +19,8 @@ RUN npm ci && \
 # Copiar el código fuente
 COPY . .
 
-# Compilar TypeScript
+# Compilar TypeScript (aunque usaremos tsx, esto verifica que compile)
 RUN npm run build
-
-# Limpiar node_modules y reinstalar solo dependencias de producción
-RUN rm -rf node_modules && \
-    npm ci --omit=dev --ignore-scripts && \
-    npm cache clean --force
 
 # Etapa 2: Production
 FROM node:22-alpine
@@ -40,12 +35,13 @@ RUN addgroup -g 1001 -S nodejs && \
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar dependencias de producción desde builder
+# Copiar dependencias de producción desde builder (necesitamos TODAS para tsx)
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
-# Copiar archivos compilados y necesarios
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+# Copiar código fuente TypeScript (tsx lo ejecutará directamente)
+COPY --from=builder --chown=nodejs:nodejs /app/src ./src
 COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/tsconfig.json ./
 COPY --chown=nodejs:nodejs public ./public
 
 # Cambiar a usuario no-root
@@ -65,5 +61,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Usar dumb-init para manejo correcto de señales
 ENTRYPOINT ["dumb-init", "--"]
 
-# Comando para iniciar la aplicación
-CMD ["node", "dist/server.js"]
+# Comando para iniciar la aplicación con tsx (soporta path aliases)
+CMD ["npx", "tsx", "src/server.ts"]
