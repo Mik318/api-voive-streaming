@@ -109,7 +109,7 @@ const sendSessionUpdate = (openAIRealtimeClient: RealtimeClient, session: CallSe
     loggerContext
   ),
     openAIRealtimeClient.updateSession({
-      model: 'gpt-4o-realtime-preview-2024-12-17', // Modelo más reciente
+      model: 'gpt-4o-audio-preview-2024-12-17', // Modelo correcto disponible
       turn_detection: {
         type: 'server_vad',
         threshold: 0.6,
