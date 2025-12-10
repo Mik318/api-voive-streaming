@@ -36,6 +36,15 @@ fastify.get('/', async (_request, reply) => {
   reply.send({ message: 'Twilio Media Stream Server is running!' });
 });
 
+// Health check endpoint para Docker/Dokploy
+fastify.get('/health', async (_request, reply) => {
+  reply.send({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
+});
+
 // Register the static file serving plugin
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, '../public'),
