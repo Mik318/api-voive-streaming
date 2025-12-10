@@ -12,7 +12,7 @@ export const TOOLS = {
   end_call: {
     type: 'call',
     name: 'end_call',
-    description: 'Ends the current call.',
+    description: 'Finaliza la llamada actual.',
     function: (args: unknown, { session }: AppDataType) => {
       // disconnect call
       if (session.incomingCall?.CallSid) {
@@ -28,20 +28,20 @@ export const TOOLS = {
     type: 'webhook',
     isHidden: true,
     name: 'call_summary',
-    description: 'returns a summary of the call',
+    description: 'Devuelve un resumen de la llamada',
     response: z.object({
-      customerName: z.string(),
-      customerLanguage: z.string().describe('The language the customer spoke in'),
-      customerAvailability: z.string(),
-      specialNotes: z.string(),
+      customerName: z.string().describe('Nombre del cliente'),
+      customerLanguage: z.string().describe('El idioma en el que habló el cliente'),
+      customerAvailability: z.string().describe('Disponibilidad del cliente'),
+      specialNotes: z.string().describe('Notas especiales sobre la conversación'),
     }),
   },
   read_memory: {
     type: 'webhook',
     name: 'read_memory',
-    description: 'returns the memory of the agent for the caller',
+    description: 'Devuelve la memoria del agente para el llamante',
     parameters: z.object({
-      key: z.string().optional().describe('Optionally specify a key to read from the memory'),
+      key: z.string().optional().describe('Opcionalmente especifica una clave para leer de la memoria'),
     }),
     response: z.array(
       z.object({
@@ -50,14 +50,14 @@ export const TOOLS = {
         isGlobal: z
           .boolean()
           .optional()
-          .describe('Whether the memory is global for all users/customers'),
+          .describe('Si la memoria es global para todos los usuarios/clientes'),
       })
     ),
   },
   add_memory: {
     type: 'webhook',
     name: 'add_memory',
-    description: 'Adds a key-value pair to the memory',
+    description: 'Agrega un par clave-valor a la memoria',
     parameters: z.object({
       key: z.string(),
       value: z.string(),
@@ -65,21 +65,21 @@ export const TOOLS = {
         .boolean()
         .optional()
         .describe(
-          'Whether the memory is global for all users/customers. Default: false. Warning: Use with caution!'
+          'Si la memoria es global para todos los usuarios/clientes. Por defecto: false. Advertencia: ¡Usar con precaución!'
         ),
     }),
   },
   remove_memory: {
     type: 'webhook',
     name: 'remove_memory',
-    description: 'Removes a key-value pair from the memory',
+    description: 'Elimina un par clave-valor de la memoria',
     parameters: z.object({
       key: z.string(),
       isGlobal: z
         .boolean()
         .optional()
         .describe(
-          'Whether the key to be removed is global for all users/customers. Default: false. Warning: Use with caution!'
+          'Si la clave a eliminar es global para todos los usuarios/clientes. Por defecto: false. Advertencia: ¡Usar con precaución!'
         ),
     }),
   },
@@ -87,38 +87,38 @@ export const TOOLS = {
     type: 'webhook',
     name: 'calendar_check_availability',
     description:
-      "Checks the availability of the calendar. Checks if an appointment is available from 'startAt' to 'endAt'.",
+      "Verifica la disponibilidad del calendario. Comprueba si hay una cita disponible desde 'startAt' hasta 'endAt'.",
     parameters: z.object({
-      startAt: z.string().describe('The start date and time of the availability check'),
-      endAt: z.string().describe('The end date and time of the availability check'),
+      startAt: z.string().describe('La fecha y hora de inicio de la verificación de disponibilidad'),
+      endAt: z.string().describe('La fecha y hora de fin de la verificación de disponibilidad'),
     }),
     response: z.object({
-      available: z.boolean().describe('Whether the calendar is available'),
+      available: z.boolean().describe('Si el calendario está disponible'),
     }),
   },
   calendar_schedule_appointment: {
     type: 'webhook',
     name: 'calendar_schedule_appointment',
-    description: 'Schedules an appointment in the calendar',
+    description: 'Programa una cita en el calendario',
     parameters: z.object({
-      startAt: z.string().describe('The start date and time of the appointment'),
-      endAt: z.string().describe('The end date and time of the appointment'),
+      startAt: z.string().describe('La fecha y hora de inicio de la cita'),
+      endAt: z.string().describe('La fecha y hora de fin de la cita'),
       title: z
         .string()
         .describe(
-          'The title of the appointment. Please include requested service title and customer name.'
+          'El título de la cita. Por favor incluye el servicio solicitado y el nombre del cliente.'
         ),
       description: z
         .string()
         .describe(
-          'The detailed description of the appointment. Please include call details, detailed contact information (e.g. caller number, name), requested service information and any other relevant information.'
+          'La descripción detallada de la cita. Por favor incluye detalles de la llamada, información de contacto detallada (ej. número de teléfono, nombre), información del servicio solicitado y cualquier otra información relevante.'
         ),
     }),
   },
   calendar_get_user_appointments: {
     type: 'webhook',
     name: 'calendar_get_user_appointments',
-    description: 'Returns all appointments for the user',
+    description: 'Devuelve todas las citas del usuario',
     response: z.array(
       z.object({
         id: z.string(),
@@ -133,16 +133,16 @@ export const TOOLS = {
   web_scraper: {
     type: 'webhook',
     name: 'web_scraper',
-    description: 'Scrapes a website for information',
+    description: 'Extrae información de un sitio web',
     parameters: z.object({
-      url: z.string().describe('The URL of the website to scrape'),
+      url: z.string().describe('La URL del sitio web a extraer'),
       mode: z
         .enum(['text', 'print', 'article', 'source', 'screenshot'])
         .default('text')
-        .describe('The mode of the scraping. Default: text.'),
+        .describe('El modo de extracción. Por defecto: text.'),
     }),
     response: z.object({
-      content: z.string().describe('The scraped content'),
+      content: z.string().describe('El contenido extraído'),
     }),
   },
 } satisfies ToolsConfig<AppDataType>;
