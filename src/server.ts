@@ -68,7 +68,10 @@ if (!ENV_IS_DEPLOYED) {
 const startServer = async () => {
   let server: string;
   try {
-    server = await fastify.listen({ port: PORT });
+    server = await fastify.listen({
+      port: PORT,
+      host: '0.0.0.0', // Escuchar en todas las interfaces (necesario para Docker/Dokploy)
+    });
     logger.log(`Server is listening on ${server}`, { deployed: ENV_IS_DEPLOYED }, loggerContext);
   } catch (err) {
     logger.error('Error starting server:', err, undefined, loggerContext);
